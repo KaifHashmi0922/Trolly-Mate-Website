@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+{% load static %}
+{% load my_filter %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Www.Trollymate.Com</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon-2.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+    {% if request.session.cust_id %}
+        <!-- Header -->
+        <header id="header" class="header fixed-top d-flex align-items-center my-0.5">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="#" class="logo d-flex align-items-center link-warning">
+                    <img src="{% static 'assets/img/apple-touch-icon-2.png' %}" alt="profile"
+                        class="profile-photo  rounded-circle">
+                    <span class="d-none d-lg-block"><i>Trolly Mate</i></span>
+                </a>
+            </div>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form class="search-form d-flex align-items-center" method="GET" action="{% url 'searchbar' %}">
+                    <input type="text" name="search" placeholder="Search" title="Enter search keyword">
+                    <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+
+            <!-- Login Navigation -->
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
+                    <li>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0">
+                            {% if request.session.cust_image %}
+                            <span class="d-none d-md-block ps-2 mx-5">
+                                <a href="{% url 'profile' %}"><img src="{% static request.session.cust_image %}"
+                                        class="profile-photo  rounded-circle" style="width: 40px; height: 40px;"
+                                        alt="Profile"></a>
+                            </span>
+                            {% else %}
+                            <span class="d-none d-md-block ps-2 mx-5">
+                                <a href="/"><img src="{% static  'assets/img/guest.png' %}"
+                                        class="profile-photo  rounded-circle" style="width: 40px; height: 40px;"
+                                        alt="Profile"></a>
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0">
+                            <span class="d-none d-md-block ps-2 mx-4 "> <a href="{% url 'cart' %}">
+                                    <img src="{% static 'assets/img/cartb.png' %}" style="width: 40px; height: 40px;"
+                                        alt="Cart">
+                                </a></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}" class="mx-4">
+                            <img src="{% static 'assets/img/logout.png' %}" alt="Logout"
+                                style="width: 40px; height: 40px; object-fit: contain;">
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        {% if request.session.cart %}
+
+            <div class="container my-5">
+                <div class="row">
+                    <h1> {{msg}}</h1>
+                    {% for p in prods %}
+                    <div class="col-md-3 my-5 mb-4">
+                        <div class="card" style="height: 100%">
+                            <img src="{{p.image.url}}" class="mx-5 my-3 card-img-top h-50 w-75 " alt="{{ p.name }}">
+                            <div class="card-body p-2">
+                                <h5 class="card-title text-truncate">{{ p.name|title }}</h5>
+                                {{ request.session.cart_p.id }}
+                                <p class="card-text text-muted">{{ p.price|Currency }}</p>
+                                <p class="card-text text" style="font-size:15px;">{{ p.des|title }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                {% if p|quantity:request.session.cart %}
+                                    {% comment %} <form action="/" method="POST"> {% endcomment %}
+
+                                        <div class="container">
+                                            <div class="row align-items-center">
+                                                <!-- Minus Button -->
+                                                <div class="col  ">
+                                                    <form action="/p_minus/" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="minus" value="{{ p.id }}">
+                                                        <button type="submit" class="btn btn-primary btn-lg">-</button>
+                                                        {% comment %} <button type="submit" name="product_id" value="{{ p.id }}"
+                                                            class="btn btn-primary btn-lg">-</button> {% endcomment %}
+                                                    </form>
+                                                </div>
+
+                                                <!-- Quantity Display -->
+
+                                                <div class="col ">
+                                                    <form action="/">
+                                                        <input type="text" name="Multi"
+                                                            class="form-control text-center border border-secondary rounded-pill"
+                                                            value="{{ p|quantity:request.session.cart }}" style="width: 60px;">
+                                                    </form>
+                                                </div>
+                                                <!-- Plus Button -->
+                                                <div class="col mx-3">
+                                                    <form action="/p_add/" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="plus" value="{{ p.id }}">
+                                                        <button type="submit" class="btn btn-success btn-lg">+</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% comment %}</form> {% endcomment %}
+
+                                        <form action="/bynow/" method="post">
+                                            {% csrf_token %}
+                                            <div class="d-grid gap-2 mt-2">
+                                                <input type="hidden" name="bynow" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-danger btn-sm">Bynow</button>
+                                            </div>
+                                        </form>
+                                {% else %}
+                                        <form action="/p_add/" method="post">
+                                            {% csrf_token %}
+                                            <div class="my-3 d-grid gap-2">
+                                                <input type="hidden" name="plus" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                                            </div>
+                                        </form>
+                                        <form action="/bynow/" method="post">
+                                            {% csrf_token %}
+                                            <div class="d-grid gap-2 mt-2">
+                                                <input type="hidden" name="bynow" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-danger btn-sm">Bynow</button>
+                                            </div>
+                                        </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="container my-5">
+                <div class="row">
+                    <h1> {{msg}}</h1>
+                    {% for p in prods %}
+                    <div class="col-md-3 my-5 mb-4">
+                        <div class="card" style="height: 100%">
+                            <img src="{{p.image.url}}" class="mx-5 my-3 card-img-top h-50 w-75 " alt="{{ p.name }}">
+                            <div class="card-body p-2">
+                                <h5 class="card-title text-truncate">{{ p.name|title }}</h5>
+                                <p class="card-text text-muted">{{ p.price|Currency }}</p>
+                                <p class="card-text text-truncate" style="font-size: 12px;">{{ p.des }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <form action="/p_add/" method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2">
+                                        <input type="hidden" name="plus" value="{{p.id}}">
+                                        <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                                    </div>
+                                </form>
+                                <form action="/p_minus/" method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2 mt-2">
+                                        <input type="hidden" name="minus" value="{{p.id}}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+
+    {% else %}
+
+        <header id="header" class="header fixed-top d-flex align-items-center my-0.5">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="#" class="logo d-flex align-items-center">
+                    <img src="{% static 'assets/img/apple-touch-icon-2.png' %}" class="profile-photo  rounded-circle"
+                        alt="Logo">
+                    <span class="d-none d-lg-block"><i>Trolly Mate</i></span>
+                </a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form class="search-form d-flex align-items-center" method="GET" action="{% url 'searchbar' %}">
+
+                    <input type="text" name="search" placeholder="Search" title="Enter search keyword">
+                    <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+
+            <!-- Login Navigation -->
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
+
+
+                    <li>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0">
+                            <span class="d-none d-md-block ps-2 mx-5  ">
+
+                                <a href="{% url 'login' %}">
+                                    <img src="{% static 'assets/img/guest.png' %}" style="width: 40px; height: 40px;"
+                                        alt="Guest">
+                                </a>
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0">
+                            <span class="d-none d-md-block ps-2 mx-2">
+                                <a href="/cart/">
+                                    <img src="{% static 'assets/img/cartb.png' %}" style="width: 40px; height: 40px;"
+                                        alt="Cart">
+                                </a>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0 link-primary"
+                            href="{% url 'login' %}">
+                            <span class="d-none d-md-block ps-2 mx-5 ">
+                                <h2>
+                                    <i>Login</i>
+                                </h2>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+       <h1> {{msg}}</h1>
+        {% if request.session.cart %}
+            <div class="container my-5">
+                <div class="row">
+                    <h1> {{msg}} </h1>
+                    {% for p in prods %}
+                    <div class="col-md-3 my-5 mb-4">
+                        <div class="card" style="height: 100%">
+                            <img src="{{p.image.url}}" class="mx-5 my-3 card-img-top h-50 w-75 " alt="{{ p.name }}">
+                            <div class="card-body p-2">
+                                <h5 class="card-title text-truncate">{{ p.name|title }}</h5>
+                                {{ request.session.cart_p.id }}
+                                <p class="card-text text-muted">{{ p.price|Currency }}</p>
+                                <p class="card-text text" style="font-size:15px;">{{ p.des|title }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+
+                                {% comment %}
+                                ========================================================================================================================================
+                                {% endcomment %}
+
+                                {% if p|quantity:request.session.cart %}
+                                        <div class="container">
+                                            <div class="row align-items-center">
+                                                <!-- Minus Button -->
+                                                <div class="col  ">
+                                                    <form action="/p_minus/" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="minus" value="{{ p.id }}">
+                                                        <button type="submit" class="btn btn-primary btn-lg">-</button>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Quantity Display -->
+
+                                                <div class="col ">
+                                                    <form action="/">
+                                                        <input type="text" name="Multi"
+                                                            class="form-control text-center border border-secondary rounded-pill"
+                                                            value="{{ p|quantity:request.session.cart }}" style="width: 60px;">
+                                                    </form>
+                                                </div>
+                                                <!-- Plus Button -->
+                                                <div class="col mx-3">
+                                                    <form action="/p_add/" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="plus" value="{{ p.id }}">
+                                                        <button type="submit" class="btn btn-success btn-lg">+</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <form action="/bynow/" method="post">
+                                            {% csrf_token %}
+                                            <div class="d-grid gap-2 mt-2">
+                                                <input type="hidden" name="bynow" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-danger btn-sm">Bynow</button>
+                                            </div>
+                                        </form>
+                                {% else %}
+                                        <form action="/p_add/" method="post">
+                                            {% csrf_token %}
+                                            <div class="my-3 d-grid gap-2">
+                                                <input type="hidden" name="plus" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                                            </div>
+                                        </form>
+                                        <form action="/bynow/" method="post">
+                                            {% csrf_token %}
+                                            <div class="d-grid gap-2 mt-2">
+                                                <input type="hidden" name="bynow" value="{{p.id}}">
+                                                <button type="submit" class="btn btn-danger btn-sm">Bynow</button>
+                                            </div>
+                                        </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+        {% else %}
+            <div class="container my-5">
+                <div class="row">
+                    <h1> {{msg}}</h1>
+                    {% for p in prods %}
+                    <div class="col-md-3 my-5 mb-4">
+                        <div class="card" style="height: 100%">
+                            <img src="{{p.image.url}}" class="mx-5 my-3 card-img-top h-50 w-75 " alt="{{ p.name }}">
+                            <div class="card-body p-2">
+                                <h5 class="card-title text-truncate">{{ p.name|title }}</h5>
+                                {{ request.session.cart_p.id }}
+                                <p class="card-text text-muted">{{ p.price|Currency }}</p>
+                                <p class="card-text text" style="font-size:15px;">{{ p.des|title }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <form action="/p_add/" method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2">
+                                        <input type="hidden" name="plus" value="{{p.id}}">
+                                        <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>
+                                    </div>
+                                </form>
+                                <form action="/p_minus/" method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2 mt-2">
+                                        <input type="hidden" name="minus" value="{{p.id}}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Bynow</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+
+    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="assets/vendor/echarts/echarts.min.js"></script>
+    <script src="assets/vendor/quill/quill.js"></script>
+    <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
