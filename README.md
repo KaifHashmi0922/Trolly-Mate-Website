@@ -5,7 +5,7 @@
 |            Feature                               |      Status              |
 |-------------------------------------------------------|------------------------------|
 | 🛒 Cart System                             | ✅ Completed     |
-| 💳 Payment Integration               | ✅ Completed     |
+| 💳 Payment Integration               | 🔧 In Progress    |
 | 🧾 Invoice Generation                 | ✅ Completed     |
 | ❌ Exception Handling                | ✅ Completed     |
 | 📦 Order Management                 | ⏳ Pending          |
