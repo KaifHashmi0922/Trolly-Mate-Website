@@ -1,0 +1,16 @@
+# 🛍️ Shopping Website (Trolly-Mate)
+
+### 🚧 Project Status
+
+|            Feature                               |      Status              |
+|-------------------------------------------------------|------------------------------|
+| 🛒 Cart System                             | ✅ Completed     |
+| 💳 Payment Integration               | ✅ Completed     |
+| 🧾 Invoice Generation                 | ✅ Completed     |
+| ❌ Exception Handling                | ✅ Completed     |
+| 📦 Order Management                 | ⏳ Pending          |
+| 🔐 Login & User Auth                  | ✅ Completed      |
+| 🌐 Django REST Framework API | 🔧 In Progress     |
+
+> **Note:** Final touches on DRF + order flow pending.
+
