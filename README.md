@@ -7,7 +7,7 @@
 | 🛒 Cart System                             | ✅ Completed     |
 | 💳 Payment Integration               | 🔧 In Progress    |
 | 🧾 Invoice Generation                 | ✅ Completed     |
-| ❌ Exception Handling                | ✅ Completed     |
+| ❌ Exception Handling                | ⏳ Pending      |
 | 📦 Order Management                 | ⏳ Pending          |
 | 🔐 Login & User Auth                  | ✅ Completed      |
 | 🌐 Django REST Framework API | 🔧 In Progress     |
